@@ -11,7 +11,7 @@
 <style>
   body { background: #000; margin: 0; font-family: sans-serif; }
   .glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
-  #captureArea { position: relative; width: 90vw; max-width: 420px; aspect-ratio: 1/1; background: #000; margin:0 auto; }
+  #captureArea { position: relative; width: 90vw; max-width: 420px; aspect-ratio:1/1; background:#000; margin:0 auto; }
   #profileImg {
     object-fit: cover;
     border-radius: 50%;
@@ -19,14 +19,14 @@
     position: absolute;
     cursor: grab;
     display:none;
-    max-width: 72%;
-    max-height: 72%;
+    max-width:72%;
+    max-height:72%;
     top:50%;
     left:50%;
-    transform: translate(-50%, -50%);
-    touch-action: none;
+    transform:translate(-50%, -50%);
+    touch-action:none;
   }
-  #agencyLogo { position: absolute; left:50%; transform: translateX(-50%); z-index:30; width:30%; height:auto; object-fit:contain; top:-5%; }
+  #agencyLogo { position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:38%; height:auto; object-fit:contain; top:-3%; }
   .controlWrapper { display:flex; flex-direction:column; gap:1rem; align-items:center; margin-top:2rem; width:100%; max-width:420px; }
   #uploadWrapper { display:inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
   #uploadWrapper:hover { background:#374151; }
@@ -84,8 +84,8 @@
   </div>
 
   <!-- Papan nama -->
-  <div class="absolute bottom-[4%] left-1/2 -translate-x-1/2 bg-yellow-700 h-14 rounded-xl shadow-lg flex items-center justify-center z-30 px-6">
-    <span id="nameText" class="text-white font-extrabold text-lg tracking-wide text-center whitespace-nowrap">Nama Kreator</span>
+  <div class="absolute bottom-[4%] left-1/2 -translate-x-1/2 bg-yellow-700 h-10 rounded-xl shadow-lg flex items-center justify-center z-30 px-4">
+    <span id="nameText" class="text-white font-extrabold text-base tracking-wide text-center whitespace-nowrap">Nama Kreator</span>
   </div>
 </div>
 
