@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VIP Agency Generator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<style>
+  body { background: #000; margin: 0; font-family: sans-serif; }
+  .glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
+  #captureArea { position: relative; width: 420px; height: 420px; background: #000; }
+  #profileImg { object-fit: cover; border-radius: 50%; border: 4px solid #f0d86a; position: absolute; cursor: grab; }
+  #uploadWrapper { display: inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
+  #uploadWrapper:hover { background:#374151; }
+  .controlWrapper { display:flex; flex-direction:column; gap:1rem; align-items:center; margin-top:1rem; }
+  input[type="text"] { width: 240px; padding:0.5rem; border-radius:0.5rem; border:1px solid #555; background:#1f2937; color:white; }
+</style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen p-4 space-y-6">
+
+<!-- AREA DESAIN -->
+<div id="captureArea">
+
+  <!-- Logo agency -->
+  <img id="agencyLogo" src="vip.png" 
+       alt="Logo Agency" class="absolute w-48 h-48 top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 object-contain"/>
+
+  <!-- Foto profil kreator -->
+  <img id="profileImg" src="https://via.placeholder.com/400" 
+       alt="Foto Kreator" class="absolute top-1/2 left-1/2 z-20 w-72 h-72 -translate-x-1/2 -translate-y-1/2"/>
+
+  <!-- Lingkaran border -->
+  <svg viewBox="0 0 320 320" class="absolute inset-0 w-[90%] h-[90%] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+    <defs>
+      <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#d4b94f"/>
+        <stop offset="100%" stop-color="#f0d86a"/>
+      </linearGradient>
+      <linearGradient id="black" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#111"/>
+        <stop offset="100%" stop-color="#333"/>
+      </linearGradient>
+    </defs>
+    <circle cx="160" cy="160" r="130" stroke="url(#black)" stroke-width="28" fill="none"/>
+    <circle cx="160" cy="160" r="130" stroke="url(#gold)" stroke-width="20" fill="none" stroke-dasharray="200 150"/>
+  </svg>
+
+  <!-- Diamond kiri -->
+  <svg class="absolute left-[12%] top-1/2 -translate-y-1/2 z-10 glow" width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a">
+    <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
+  </svg>
+  <!-- Diamond kanan -->
+  <svg class="absolute right-[12%] top-1/2 -translate-y-1/2 z-10 glow" width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a">
+    <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
+  </svg>
+  <!-- Diamond bawah -->
+  <svg class="absolute bottom-[14%] left-1/2 -translate-x-1/2 z-10 glow" width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a">
+    <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
+  </svg>
+
+  <!-- Papan nama -->
+  <div class="absolute bottom-[4%] left-1/2 -translate-x-1/2 
+              bg-yellow-700 w-[75%] h-14 
+              rounded-xl shadow-lg flex items-center justify-center z-30">
+    <span id="nameText" class="text-white font-extrabold text-lg tracking-wide text-center w-full overflow-hidden">Nama Kreator</span>
+  </div>
+
+</div>
+
+<!-- Kontrol di bawah area desain -->
+<div class="controlWrapper">
+  <input type="text" id="creatorName" placeholder="Masukkan nama kreator"/>
+
+  <!-- Tombol upload -->
+  <label id="uploadWrapper">
+    <span class="text-white select-none">Upload Gambar</span>
+    <input type="file" id="uploadImg" accept="image/*" class="hidden"/>
+  </label>
+
+  <!-- Tombol download -->
+  <button id="downloadBtn" 
+    class="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
+    Download
+  </button>
+</div>
+
+<!-- Modal Cropper -->
+<div id="cropperModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-4 rounded shadow-lg max-w-md w-full">
+    <h2 class="text-lg font-bold mb-2">Sesuaikan Foto</h2>
+    <div class="w-full h-64">
+      <img id="cropperImage" src="" class="max-h-64 mx-auto"/>
+    </div>
+    <div class="flex justify-end gap-2 mt-4">
+      <button id="cancelCrop" class="px-4 py-2 bg-gray-400 text-black rounded">Batal</button>
+      <button id="saveCrop" class="px-4 py-2 bg-yellow-500 text-black font-bold rounded">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let cropper;
+
+// Update nama kreator realtime
+document.querySelectorAll("#creatorName").forEach(input => {
+  input.addEventListener("input", function(){
+    document.getElementById("nameText").innerText = this.value || "Nama Kreator";
+  });
+});
+
+// Upload gambar
+document.getElementById("uploadImg").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const cropperImage = document.getElementById("cropperImage");
+      cropperImage.src = ev.target.result;
+      cropperImage.onload = () => {
+        document.getElementById("cropperModal").classList.remove("hidden");
+        if(cropper) cropper.destroy();
+        cropper = new Cropper(cropperImage, {
+          aspectRatio:1,
+          viewMode:1,
+          dragMode:"move",
+          autoCropArea:1,
+          responsive:true,
+          background:false,
+          minContainerWidth:300,
+          minContainerHeight:300,
+        });
+      }
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+// Batal crop
+document.getElementById("cancelCrop").addEventListener("click", function(){
+  document.getElementById("cropperModal").classList.add("hidden");
+  if(cropper) cropper.destroy();
+});
+
+// Simpan crop → update foto user
+document.getElementById("saveCrop").addEventListener("click", function(){
+  const canvasCrop = cropper.getCroppedCanvas({width:400, height:400});
+  document.getElementById("profileImg").src = canvasCrop.toDataURL();
+  document.getElementById("cropperModal").classList.add("hidden");
+  cropper.destroy();
+});
+
+// Download hasil desain
+document.getElementById("downloadBtn").addEventListener("click", async function(){
+  const profileImg = document.getElementById("profileImg");
+  if(!profileImg.src) return alert("Upload foto dulu!");
+
+  await new Promise(resolve=>{
+    if(profileImg.complete) resolve();
+    else profileImg.onload = resolve;
+  });
+
+  html2canvas(document.getElementById("captureArea"), {
+    backgroundColor:null,
+    scale:2,
+    useCORS:true
+  }).then(canvas=>{
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "vip-agency.png";
+    link.click();
+  });
+});
+</script>
+</body>
+</html>
