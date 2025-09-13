@@ -11,7 +11,17 @@
 <style>
 body { background: #000; margin: 0; font-family: sans-serif; }
 .glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
-#captureArea { position: relative; width: 90vw; max-width: 420px; aspect-ratio:1/1; background:#000; margin:0 auto; }
+
+#captureArea {
+  position: relative;
+  width: 90vw;
+  max-width: 420px;
+  aspect-ratio:1/1;
+  background:#000;
+  margin:0 auto;
+  overflow:hidden;
+}
+
 #profileImg {
   object-fit: cover;
   border-radius: 50%;
@@ -19,38 +29,86 @@ body { background: #000; margin: 0; font-family: sans-serif; }
   position: absolute;
   cursor: grab;
   display:none;
-  max-width:72%;
-  max-height:72%;
   top:50%;
   left:50%;
   transform:translate(-50%, -50%);
   touch-action:none;
+  max-width:65%;
+  max-height:65%;
 }
-#agencyLogo { position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:38%; height:auto; object-fit:contain; top:-3%; }
+
+#agencyLogo {
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:30;
+  width:45%;
+  height:auto;
+  object-fit:contain;
+  top:-5%;
+}
+
 .controlWrapper { display:flex; flex-direction:column; gap:0.8rem; align-items:center; margin-top:2rem; width:100%; max-width:420px; }
 #uploadGroup { display:flex; gap:0.5rem; }
 #uploadWrapper { display:inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
 #uploadWrapper:hover { background:#374151; }
-#editWrapper { display:inline-block; background:#1e40af; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
-#editWrapper:hover { background:#3b82f6; }
+#editPhotoBtn { display:inline-block; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; background:#1e40af; color:white; font-weight:bold; }
+#editPhotoBtn:hover { background:#3b82f6; }
 input[type="text"] { width:80%; padding:0.5rem; border-radius:0.5rem; border:1px solid #555; background:#1f2937; color:white; text-align:center; }
-#nameBoard { background-color:#4b3200; height:40px; padding:0 12px; border-radius:12px; }
-button { cursor:pointer; }
+
+#nameBoard {
+  position:absolute;
+  bottom:4%;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#4b3200;
+  padding:0 12px;
+  border-radius:12px;
+  height:32px;
+  z-index:30;
+}
+
+#nameText {
+  color:white;
+  font-weight:800;
+  font-size:1rem;
+  text-align:center;
+  line-height:32px;
+  white-space:nowrap;
+}
+
+/* Bintang kiri kanan */
+.star {
+  position:absolute;
+  width:20px;
+  height:20px;
+  fill:white;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:25;
+}
+#starLeft { left:5%; }
+#starRight { right:5%; }
 </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen pt-16 p-4 space-y-6">
 
 <div id="captureArea">
 
-  <!-- Logo agency PNG -->
-  <img id="agencyLogo" src="image/vip.png" alt="Logo Agency"/>
+<!-- Logo agency PNG -->
+<img id="agencyLogo" src="image/vip.png" alt="Logo Agency"
+     style="position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:32%; height:auto; top:12%;" />
+
 
   <!-- Foto profil kreator -->
   <img id="profileImg" src="" alt="Foto Kreator"/>
 
   <!-- Lingkaran border -->
   <div class="absolute inset-0 flex items-center justify-center">
-    <svg viewBox="0 0 320 320" class="w-[90%] h-[90%]">
+    <svg viewBox="0 0 320 320" class="w-[85%] h-[85%]"><!-- sedikit lebih kecil -->
       <defs>
         <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#d4b94f"/>
@@ -61,48 +119,35 @@ button { cursor:pointer; }
           <stop offset="100%" stop-color="#333"/>
         </linearGradient>
       </defs>
-      <circle cx="160" cy="160" r="130" stroke="url(#black)" stroke-width="28" fill="none"/>
-      <circle cx="160" cy="160" r="130" stroke="url(#gold)" stroke-width="20" fill="none" stroke-dasharray="200 150"/>
+      <circle cx="160" cy="160" r="120" stroke="url(#black)" stroke-width="28" fill="none"/>
+      <circle cx="160" cy="160" r="125" stroke="url(#gold)" stroke-width="20" fill="none" stroke-dasharray="200 150"/>
     </svg>
   </div>
 
-  <!-- Diamond kiri -->
-  <div class="absolute left-[12%] top-1/2 -translate-y-1/2 z-10">
-    <svg width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a" class="glow">
-      <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
-    </svg>
-  </div>
-  <!-- Diamond kanan -->
-  <div class="absolute right-[12%] top-1/2 -translate-y-1/2 z-10">
-    <svg width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a" class="glow">
-      <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
-    </svg>
-  </div>
-  <!-- Diamond bawah -->
-  <div class="absolute bottom-[14%] left-1/2 -translate-x-1/2 z-10">
-    <svg width="36" height="46" viewBox="0 0 24 24" fill="#f0d86a" class="glow">
-      <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
-    </svg>
-  </div>
+  <!-- Bintang kiri & kanan -->
+  <svg class="star" id="starLeft" viewBox="0 0 24 24">
+    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
+  </svg>
+  <svg class="star" id="starRight" viewBox="0 0 24 24">
+    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
+  </svg>
 
-  <!-- Papan nama -->
-  <div id="nameBoard" class="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex items-center justify-center z-30">
-    <span id="nameText" class="text-white font-extrabold text-base text-center whitespace-nowrap">Nama Kreator</span>
-  </div>
+ <!-- Papan nama -->
+<div id="nameBoard" style="position:absolute; left:50%; transform:translateX(-50%); bottom:16%; display:inline-flex; align-items:center; justify-content:center; background:#4b3200; padding:0 12px; border-radius:12px; min-width:80px; max-width:90%; z-index:30;">
+  <span id="nameText" style="color:white; font-weight:800; font-size:1rem; text-align:center; white-space:nowrap;">Nama Kreator</span>
+</div>
 
 </div>
 
 <div class="controlWrapper">
-  <input type="text" id="creatorName" placeholder="Masukkan nama kreator"/>
+  <input type="text" id="creatorName" placeholder="Username akun TikTok"/>
   
   <div id="uploadGroup">
-    <!-- Tombol Upload -->
     <label id="uploadWrapper">
       <span class="text-white select-none">Upload Gambar</span>
       <input type="file" id="uploadImg" accept="image/*" class="hidden"/>
     </label>
-    <!-- Tombol Edit Gambar -->
-    <button id="editPhotoBtn" class="px-4 py-2 text-white font-bold" style="background:#1e40af; border-radius:0.5rem;">Edit Gambar</button>
+    <button id="editPhotoBtn">Edit Gambar</button>
   </div>
 
   <button id="downloadBtn" class="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">Download</button>
@@ -125,12 +170,11 @@ button { cursor:pointer; }
 let cropper;
 let lastUploadedSrc = "";
 
-// Update nama kreator realtime
 document.getElementById("creatorName").addEventListener("input", function(){
-  document.getElementById("nameText").innerText = this.value || "Nama Kreator";
+  const textEl = document.getElementById("nameText");
+  textEl.innerText = this.value || "Nama Kreator";
 });
 
-// Fungsi buka cropper
 function openCropper(src){
   const cropperImage = document.getElementById("cropperImage");
   cropperImage.src = src;
@@ -150,7 +194,6 @@ function openCropper(src){
   }
 }
 
-// Upload gambar
 document.getElementById("uploadImg").addEventListener("change", function(e){
   const file = e.target.files[0];
   if(file){
@@ -163,7 +206,6 @@ document.getElementById("uploadImg").addEventListener("change", function(e){
   }
 });
 
-// Edit Gambar
 document.getElementById("editPhotoBtn").addEventListener("click", function(){
   if(!lastUploadedSrc){
     alert("Upload foto dulu!");
@@ -172,13 +214,11 @@ document.getElementById("editPhotoBtn").addEventListener("click", function(){
   openCropper(lastUploadedSrc);
 });
 
-// Batal crop
 document.getElementById("cancelCrop").addEventListener("click", function(){
   document.getElementById("cropperModal").classList.add("hidden");
   if(cropper) cropper.destroy();
 });
 
-// Simpan crop → update foto user dan tampilkan
 document.getElementById("saveCrop").addEventListener("click", function(){
   const canvasCrop = cropper.getCroppedCanvas({width:400, height:400});
   const profileImg = document.getElementById("profileImg");
@@ -191,53 +231,42 @@ document.getElementById("saveCrop").addEventListener("click", function(){
   cropper.destroy();
   lastUploadedSrc = profileImg.src;
 
-  // Drag foto user setelah crop
-  let isDragging=false, startX=0, startY=0, initialX=0, initialY=0;
-  const parent = document.getElementById("captureArea");
-  profileImg.onpointerdown = function(e){
-    e.preventDefault();
+  // Drag foto
+  let isDragging=false, startX=0, startY=0, initX=0, initY=0;
+  const profile = profileImg;
+  profile.onpointerdown=function(e){
     isDragging=true;
-    startX = e.clientX || e.touches[0].clientX;
-    startY = e.clientY || e.touches[0].clientY;
-    const transform = profileImg.style.transform.match(/translate\((-?\d+\.?\d*)%, (-?\d+\.?\d*)%\)/);
-    initialX = parseFloat(transform[1]);
-    initialY = parseFloat(transform[2]);
-  };
-  document.onpointermove = function(e){
+    startX=e.clientX||e.touches[0].clientX;
+    startY=e.clientY||e.touches[0].clientY;
+    const style = window.getComputedStyle(profile);
+    const matrix = new WebKitCSSMatrix(style.transform);
+    initX=matrix.m41;
+    initY=matrix.m42;
+    profile.setPointerCapture(e.pointerId);
+  }
+  profile.onpointermove=function(e){
     if(!isDragging) return;
-    const currentX = e.clientX || e.touches[0].clientX;
-    const currentY = e.clientY || e.touches[0].clientY;
-    let dx = ((currentX - startX)/parent.offsetWidth)*100;
-    let dy = ((currentY - startY)/parent.offsetHeight)*100;
-    profileImg.style.transform = `translate(${initialX+dx}%, ${initialY+dy}%)`;
-  };
-  document.onpointerup = function(){ isDragging=false; };
+    let moveX = (e.clientX||e.touches[0].clientX)-startX;
+    let moveY = (e.clientY||e.touches[0].clientY)-startY;
+    profile.style.transform = `translate(${initX+moveX}px, ${initY+moveY}px)`;
+  }
+  profile.onpointerup=function(){ isDragging=false; }
+  profile.ontouchend=function(){ isDragging=false; }
 });
 
-// Download hasil desain 644x644 px
 document.getElementById("downloadBtn").addEventListener("click", async function(){
   const profileImg = document.getElementById("profileImg");
   if(!profileImg.src) return alert("Upload foto dulu!");
-  await new Promise(resolve => {
-    const images = document.querySelectorAll("#captureArea img");
-    let loaded = 0;
-    images.forEach(img => {
-      if(img.complete) loaded++;
-      else img.onload = () => { loaded++; if(loaded === images.length) resolve(); };
-    });
-    if(loaded === images.length) resolve();
-  });
-  const captureArea = document.getElementById("captureArea");
-  html2canvas(captureArea, {backgroundColor:null, width:captureArea.offsetWidth, height:captureArea.offsetHeight, scale:1, useCORS:true}).then(canvas => {
-    const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = 644;
-    finalCanvas.height = 644;
-    const ctx = finalCanvas.getContext("2d");
-    ctx.drawImage(canvas, 0, 0, 644, 644);
+  const captureArea=document.getElementById("captureArea");
 
-    const link = document.createElement("a");
-    link.href = finalCanvas.toDataURL("image/png");
-    link.download = "vip-agency.png";
+  html2canvas(captureArea, {backgroundColor:null, scale:1, useCORS:true}).then(canvas=>{
+    const finalCanvas=document.createElement("canvas");
+    finalCanvas.width=644; finalCanvas.height=644;
+    const ctx=finalCanvas.getContext("2d");
+    ctx.drawImage(canvas,0,0,644,644);
+    const link=document.createElement("a");
+    link.href=finalCanvas.toDataURL("image/png");
+    link.download="vip-agency.png";
     link.click();
   });
 });
