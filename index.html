@@ -9,35 +9,37 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <style>
-  body { background: #000; margin: 0; font-family: sans-serif; }
-  .glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
-  #captureArea { position: relative; width: 90vw; max-width: 420px; aspect-ratio:1/1; background:#000; margin:0 auto; }
-  #profileImg {
-    object-fit: cover;
-    border-radius: 50%;
-    border: 4px solid #f0d86a;
-    position: absolute;
-    cursor: grab;
-    display:none;
-    max-width:72%;
-    max-height:72%;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    touch-action:none;
-  }
-  #agencyLogo { position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:38%; height:auto; object-fit:contain; top:-3%; }
-  .controlWrapper { display:flex; flex-direction:column; gap:1rem; align-items:center; margin-top:2rem; width:100%; max-width:420px; }
-  #uploadWrapper { display:inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
-  #uploadWrapper:hover { background:#374151; }
-  input[type="text"] { width:80%; padding:0.5rem; border-radius:0.5rem; border:1px solid #555; background:#1f2937; color:white; text-align:center; }
-  .cropper-container { background-color: transparent !important; }
-  @media (min-width:768px) { #captureArea { width:420px; height:420px; } }
+body { background: #000; margin: 0; font-family: sans-serif; }
+.glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
+#captureArea { position: relative; width: 90vw; max-width: 420px; aspect-ratio:1/1; background:#000; margin:0 auto; }
+#profileImg {
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #f0d86a;
+  position: absolute;
+  cursor: grab;
+  display:none;
+  max-width:72%;
+  max-height:72%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  touch-action:none;
+}
+#agencyLogo { position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:38%; height:auto; object-fit:contain; top:-3%; }
+.controlWrapper { display:flex; flex-direction:column; gap:0.8rem; align-items:center; margin-top:2rem; width:100%; max-width:420px; }
+#uploadGroup { display:flex; gap:0.5rem; }
+#uploadWrapper { display:inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
+#uploadWrapper:hover { background:#374151; }
+#editWrapper { display:inline-block; background:#1e40af; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
+#editWrapper:hover { background:#3b82f6; }
+input[type="text"] { width:80%; padding:0.5rem; border-radius:0.5rem; border:1px solid #555; background:#1f2937; color:white; text-align:center; }
+#nameBoard { background-color:#4b3200; height:40px; padding:0 12px; border-radius:12px; }
+button { cursor:pointer; }
 </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen pt-16 p-4 space-y-6">
 
-<!-- AREA DESAIN -->
 <div id="captureArea">
 
   <!-- Logo agency PNG -->
@@ -84,22 +86,28 @@
   </div>
 
   <!-- Papan nama -->
-  <div class="absolute bottom-[4%] left-1/2 -translate-x-1/2 bg-yellow-700 h-10 rounded-xl shadow-lg flex items-center justify-center z-30 px-4">
-    <span id="nameText" class="text-white font-extrabold text-base tracking-wide text-center whitespace-nowrap">Nama Kreator</span>
+  <div id="nameBoard" class="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex items-center justify-center z-30">
+    <span id="nameText" class="text-white font-extrabold text-base text-center whitespace-nowrap">Nama Kreator</span>
   </div>
+
 </div>
 
-<!-- Kontrol di bawah area desain -->
 <div class="controlWrapper">
   <input type="text" id="creatorName" placeholder="Masukkan nama kreator"/>
-  <label id="uploadWrapper">
-    <span class="text-white select-none">Upload Gambar</span>
-    <input type="file" id="uploadImg" accept="image/*" class="hidden"/>
-  </label>
+  
+  <div id="uploadGroup">
+    <!-- Tombol Upload -->
+    <label id="uploadWrapper">
+      <span class="text-white select-none">Upload Gambar</span>
+      <input type="file" id="uploadImg" accept="image/*" class="hidden"/>
+    </label>
+    <!-- Tombol Edit Gambar -->
+    <button id="editPhotoBtn" class="px-4 py-2 text-white font-bold" style="background:#1e40af; border-radius:0.5rem;">Edit Gambar</button>
+  </div>
+
   <button id="downloadBtn" class="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">Download</button>
 </div>
 
-<!-- Modal Cropper -->
 <div id="cropperModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
   <div class="bg-white p-4 rounded shadow-lg max-w-md w-full relative">
     <h2 class="text-lg font-bold mb-2">Sesuaikan Foto</h2>
@@ -115,11 +123,32 @@
 
 <script>
 let cropper;
+let lastUploadedSrc = "";
 
 // Update nama kreator realtime
 document.getElementById("creatorName").addEventListener("input", function(){
   document.getElementById("nameText").innerText = this.value || "Nama Kreator";
 });
+
+// Fungsi buka cropper
+function openCropper(src){
+  const cropperImage = document.getElementById("cropperImage");
+  cropperImage.src = src;
+  cropperImage.onload = () => {
+    document.getElementById("cropperModal").classList.remove("hidden");
+    if(cropper) cropper.destroy();
+    cropper = new Cropper(cropperImage, {
+      aspectRatio:1,
+      viewMode:1,
+      dragMode:"move",
+      autoCropArea:1,
+      responsive:true,
+      background:false,
+      minContainerWidth:300,
+      minContainerHeight:300,
+    });
+  }
+}
 
 // Upload gambar
 document.getElementById("uploadImg").addEventListener("change", function(e){
@@ -127,25 +156,20 @@ document.getElementById("uploadImg").addEventListener("change", function(e){
   if(file){
     const reader = new FileReader();
     reader.onload = function(ev){
-      const cropperImage = document.getElementById("cropperImage");
-      cropperImage.src = ev.target.result;
-      cropperImage.onload = () => {
-        document.getElementById("cropperModal").classList.remove("hidden");
-        if(cropper) cropper.destroy();
-        cropper = new Cropper(cropperImage, {
-          aspectRatio:1,
-          viewMode:1,
-          dragMode:"move",
-          autoCropArea:1,
-          responsive:true,
-          background:false,
-          minContainerWidth:300,
-          minContainerHeight:300,
-        });
-      }
+      lastUploadedSrc = ev.target.result;
+      openCropper(lastUploadedSrc);
     }
     reader.readAsDataURL(file);
   }
+});
+
+// Edit Gambar
+document.getElementById("editPhotoBtn").addEventListener("click", function(){
+  if(!lastUploadedSrc){
+    alert("Upload foto dulu!");
+    return;
+  }
+  openCropper(lastUploadedSrc);
 });
 
 // Batal crop
@@ -160,15 +184,14 @@ document.getElementById("saveCrop").addEventListener("click", function(){
   const profileImg = document.getElementById("profileImg");
   profileImg.src = canvasCrop.toDataURL();
   profileImg.style.display = "block";
-
   profileImg.style.top = "50%";
   profileImg.style.left = "50%";
   profileImg.style.transform = "translate(-50%, -50%)";
-
   document.getElementById("cropperModal").classList.add("hidden");
   cropper.destroy();
+  lastUploadedSrc = profileImg.src;
 
-  // Drag foto terbatas lingkaran
+  // Drag foto user setelah crop
   let isDragging=false, startX=0, startY=0, initialX=0, initialY=0;
   const parent = document.getElementById("captureArea");
   profileImg.onpointerdown = function(e){
@@ -195,7 +218,6 @@ document.getElementById("saveCrop").addEventListener("click", function(){
 document.getElementById("downloadBtn").addEventListener("click", async function(){
   const profileImg = document.getElementById("profileImg");
   if(!profileImg.src) return alert("Upload foto dulu!");
-
   await new Promise(resolve => {
     const images = document.querySelectorAll("#captureArea img");
     let loaded = 0;
@@ -205,16 +227,8 @@ document.getElementById("downloadBtn").addEventListener("click", async function(
     });
     if(loaded === images.length) resolve();
   });
-
   const captureArea = document.getElementById("captureArea");
-  html2canvas(captureArea, {
-    backgroundColor:null,
-    width:captureArea.offsetWidth,
-    height:captureArea.offsetHeight,
-    scale:1,
-    useCORS:true,
-    allowTaint:true
-  }).then(canvas => {
+  html2canvas(captureArea, {backgroundColor:null, width:captureArea.offsetWidth, height:captureArea.offsetHeight, scale:1, useCORS:true}).then(canvas => {
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = 644;
     finalCanvas.height = 644;
