@@ -1,275 +1,451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Logo VIP Agency</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-<style>
-body { background: #000; margin: 0; font-family: sans-serif; }
-.glow { filter: drop-shadow(0 0 8px rgba(240,216,106,0.9)); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Agency Design</title>
+    <!-- Library to capture the screen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-#captureArea {
-  position: relative;
-  width: 90vw;
-  max-width: 420px;
-  aspect-ratio:1/1;
-  background:#000;
-  margin:0 auto;
-  overflow:hidden;
-}
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0d0d0d;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
 
-#profileImg {
-  object-fit: cover;
-  border-radius: 50%;
-  border: 4px solid #f0d86a;
-  position: absolute;
-  cursor: grab;
-  display:none;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  touch-action:none;
-  max-width:65%;
-  max-height:65%;
-}
+        .container {
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 800px;
+            max-height: 800px;
+            position: relative;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 80%);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.7) inset;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vmin;
+        }
 
-#agencyLogo {
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:30;
-  width:45%;
-  height:auto;
-  object-fit:contain;
-  top:-5%;
-}
+        .background-triangles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.2;
+            z-index: 1;
+        }
 
-.controlWrapper { display:flex; flex-direction:column; gap:0.8rem; align-items:center; margin-top:2rem; width:100%; max-width:420px; }
-#uploadGroup { display:flex; gap:0.5rem; }
-#uploadWrapper { display:inline-block; background:#1f2937; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; }
-#uploadWrapper:hover { background:#374151; }
-#editPhotoBtn { display:inline-block; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer; background:#1e40af; color:white; font-weight:bold; }
-#editPhotoBtn:hover { background:#3b82f6; }
-input[type="text"] { width:80%; padding:0.5rem; border-radius:0.5rem; border:1px solid #555; background:#1f2937; color:white; text-align:center; }
+        .triangle-group {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5vmin;
+        }
 
-#nameBoard {
-  position:absolute;
-  bottom:4%;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#4b3200;
-  padding:0 12px;
-  border-radius:12px;
-  height:32px;
-  z-index:30;
-}
+        .triangle-row {
+            display: flex;
+            gap: 0.5vmin;
+        }
 
-#nameText {
-  color:white;
-  font-weight:800;
-  font-size:1rem;
-  text-align:center;
-  line-height:32px;
-  white-space:nowrap;
-}
+        .triangle.small {
+            width: 0;
+            height: 0;
+            border-left: 1vmin solid transparent;
+            border-right: 1vmin solid transparent;
+            border-bottom: 2vmin solid #888;
+        }
 
-/* Bintang kiri kanan */
-.star {
-  position:absolute;
-  width:20px;
-  height:20px;
-  fill:white;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:25;
-}
-#starLeft { left:5%; }
-#starRight { right:5%; }
-</style>
+        .triangle-group.top-left { top: 5%; left: 5%; transform: rotate(180deg); }
+        .triangle-group.bottom-right { bottom: 5%; right: 5%; }
+        .triangle.large {
+            width: 0;
+            height: 0;
+            border-left: 1.5vmin solid transparent;
+            border-right: 1.5vmin solid transparent;
+            border-bottom: 3vmin solid #888;
+        }
+
+        .triangle-group.top-right { top: 5%; right: 5%; }
+        .triangle-group.bottom-left { bottom: 5%; left: 5%; transform: rotate(180deg); }
+
+        .main-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2vmin;
+        }
+
+        .logo-text {
+            color: #ffd700;
+            font-size: clamp(1.5rem, 4vmin, 2.5rem);
+            font-weight: bold;
+            letter-spacing: 0.3vmin;
+            text-shadow: 0 0 0.8vmin #ffd700, 0 0 1.5vmin rgba(255, 215, 0, 0.5);
+            margin-bottom: -0.3vmin;
+        }
+
+        .logo-subtext {
+            color: #fff;
+            font-size: clamp(0.7rem, 1.8vmin, 1.2rem);
+            letter-spacing: 0.15vmin;
+            text-shadow: 0 0 0.4vmin #fff;
+            opacity: 0.8;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 55%;
+            padding-bottom: 55%; /* Aspect ratio 1:1 */
+            height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2vmin;
+        }
+
+        .outer-ring {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            background-color: #ffd700;
+            box-shadow: 0 0 2.5vmin #ffd700, 0 0 1.5vmin #ffd700 inset;
+            z-index: 5;
+            --gap: 10deg;
+            --arc: calc(90deg - var(--gap));
+            mask:
+                radial-gradient(circle, transparent calc(50% - 1vmin), black calc(50% - 1vmin), black calc(50% + 1vmin), transparent calc(50% + 1vmin)),
+                conic-gradient(
+                    black 0deg var(--arc),
+                    transparent var(--arc) calc(var(--arc) + var(--gap)),
+                    black calc(var(--arc) + var(--gap)) calc(2 * var(--arc) + var(--gap)),
+                    transparent calc(2 * var(--arc) + var(--gap)) calc(2 * var(--arc) + 2 * var(--gap)),
+                    black calc(2 * var(--arc) + 2 * var(--gap)) calc(3 * var(--arc) + 2 * var(--gap)),
+                    transparent calc(3 * var(--arc) + 2 * var(--gap)) calc(3 * var(--arc) + 3 * var(--gap)),
+                    black calc(3 * var(--arc) + 3 * var(--gap)) calc(4 * var(--arc) + 3 * var(--gap)),
+                    transparent calc(4 * var(--arc) + 3 * var(--gap)) 360deg
+                );
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            background: #000;
+            border-radius: 50%;
+            z-index: 7;
+            box-shadow: 0 0 1.5vmin #ffd700;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .uploaded-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .circle-overlay {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(100, 100, 100, 0.3) 50%, rgba(0, 0, 0, 0.5) 100%);
+            transform: rotate(45deg);
+            z-index: 8;
+            box-shadow: 0 0 2vmin rgba(0, 0, 0, 0.7) inset;
+        }
+        
+        .arrow-gem {
+            position: absolute;
+            width: 2.5vmin;
+            height: 2.5vmin;
+            background: #fff;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            box-shadow: 0 0 1.5vmin #fff;
+            z-index: 9;
+        }
+
+        .arrow-gem.top-left { top: 12%; left: 15%; transform: rotate(-135deg); }
+        .arrow-gem.bottom-right { bottom: 12%; right: 15%; transform: rotate(45deg); }
+
+        /* Platform is made slightly smaller */
+        .platform {
+            width: 55%;
+            height: 8vmin;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1.5vmin 1.5vmin 5vmin 5vmin;
+            box-shadow: 0 0 1.5vmin rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(0.5vmin);
+            z-index: 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 4vmin;
+        }
+
+        .platform::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 1.5vmin 1.5vmin 5vmin 5vmin;
+        }
+
+        .username-input {
+            width: 80%;
+            max-width: 300px;
+            padding: 0.5vmin;
+            font-size: clamp(1rem, 2.5vmin, 1.5rem);
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: #FFFFFF; /* Brighter font color */
+            /* New text-shadow for black outline effect */
+            text-shadow: 
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000,
+                 0 0 8px #ffd700;
+            outline: none;
+            z-index: 10;
+        }
+
+        .username-input::placeholder {
+            color: #cccccc; /* Brighter placeholder */
+            opacity: 0.7;
+            text-shadow: none;
+        }
+
+        .button-container {
+            width: 100%;
+            display: flex;
+            gap: 2vmin;
+            justify-content: center;
+            align-items: center;
+            padding: 2vmin 0;
+            margin-top: auto; /* Push to the bottom */
+            z-index: 20;
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        .custom-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1vmin;
+            padding: 1.2vmin 2.5vmin;
+            font-size: clamp(0.8rem, 2vmin, 1.1rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #ffd700;
+            background: transparent;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .custom-btn:hover {
+            background: #ffd700;
+            color: #0d0d0d;
+            box-shadow: 0 0 15px #ffd700, 0 0 25px rgba(255, 215, 0, 0.8);
+            transform: translateY(-3px);
+        }
+        
+        .custom-btn svg {
+            width: clamp(1rem, 2.5vmin, 1.5rem);
+            height: clamp(1rem, 2.5vmin, 1.5rem);
+        }
+        
+    </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen pt-16 p-4 space-y-6">
+<body>
+    <div class="container" id="container">
+        <div class="background-triangles">
+            <!-- Triangle groups remain the same -->
+             <div class="triangle-group top-left">
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div></div>
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div></div>
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div></div>
+            </div>
+            <div class="triangle-group bottom-right">
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div></div>
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div></div>
+                <div class="triangle-row"><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div><div class="triangle small"></div></div>
+            </div>
+            <div class="triangle-group top-right">
+                 <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div></div>
+                <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div></div>
+                <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div></div>
+            </div>
+            <div class="triangle-group bottom-left">
+                <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div></div>
+                <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div></div>
+                <div class="triangle-row"><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div><div class="triangle large"></div></div>
+            </div>
+        </div>
 
-<div id="captureArea">
+        <div class="main-content">
+            <div class="logo">
+                <div class="logo-text">VIP AGENCY</div>
+                <div class="logo-subtext">VIN INDUSTRY PROJECT</div>
+            </div>
+            <div class="circle-container">
+                <div class="outer-ring"></div>
+                <div class="center-circle">
+                    <img class="uploaded-image" id="uploadedImage" alt="Uploaded Image">
+                </div>
+                <div class="circle-overlay"></div>
+                <div class="arrow-gem top-left"></div>
+                <div class="arrow-gem bottom-right"></div>
+            </div>
+            <div class="platform">
+                <input type="text" class="username-input" placeholder="Enter Username" maxlength="20">
+            </div>
+        </div>
 
-<!-- Logo agency PNG -->
-<img id="agencyLogo" src="image/vip.png" alt="Logo Agency"
-     style="position:absolute; left:50%; transform:translateX(-50%); z-index:30; width:32%; height:auto; top:12%;" />
-
-
-  <!-- Foto profil kreator -->
-  <img id="profileImg" src="" alt="Foto Kreator"/>
-
-  <!-- Lingkaran border -->
-  <div class="absolute inset-0 flex items-center justify-center">
-    <svg viewBox="0 0 320 320" class="w-[85%] h-[85%]"><!-- sedikit lebih kecil -->
-      <defs>
-        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#d4b94f"/>
-          <stop offset="100%" stop-color="#f0d86a"/>
-        </linearGradient>
-        <linearGradient id="black" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#111"/>
-          <stop offset="100%" stop-color="#333"/>
-        </linearGradient>
-      </defs>
-      <circle cx="160" cy="160" r="120" stroke="url(#black)" stroke-width="28" fill="none"/>
-      <circle cx="160" cy="160" r="120" stroke="url(#gold)" stroke-width="20" fill="none" stroke-dasharray="170 150"/>
-    </svg>
-  </div>
-
-  <!-- Bintang kiri & kanan -->
-  <svg class="star" id="starLeft" viewBox="0 0 24 24">
-    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
-  </svg>
-  <svg class="star" id="starRight" viewBox="0 0 24 24">
-    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
-  </svg>
-
- <!-- Papan nama -->
-<div id="nameBoard" style="position:absolute; left:50%; transform:translateX(-50%); bottom:16%; display:inline-flex; align-items:center; justify-content:center; background:#4b3200; padding:0 12px; border-radius:12px; min-width:80px; max-width:90%; z-index:30;">
-  <span id="nameText" style="color:white; font-weight:800; font-size:1rem; text-align:center; white-space:nowrap;">Nama Kreator</span>
-</div>
-
-</div>
-
-<div class="controlWrapper">
-  <input type="text" id="creatorName" placeholder="Username akun TikTok"/>
-  
-  <div id="uploadGroup">
-    <label id="uploadWrapper">
-      <span class="text-white select-none">Upload Gambar</span>
-      <input type="file" id="uploadImg" accept="image/*" class="hidden"/>
-    </label>
-    <button id="editPhotoBtn">Edit Gambar</button>
-  </div>
-
-  <button id="downloadBtn" class="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">Download</button>
-</div>
-
-<div id="cropperModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-  <div class="bg-white p-4 rounded shadow-lg max-w-md w-full relative">
-    <h2 class="text-lg font-bold mb-2">Sesuaikan Foto</h2>
-    <div class="w-full h-64 relative">
-      <img id="cropperImage" src="" class="max-h-64 mx-auto"/>
+        <!-- Buttons are now outside main-content, at the bottom of the container flexbox -->
+        <div class="button-container">
+            <input type="file" id="imageUpload" accept="image/*">
+            <label for="imageUpload" class="custom-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M9.75 6.75a.75.75 0 00-1.5 0v8.54l-2.47-2.47a.75.75 0 00-1.06 1.06l3.75 3.75a.75.75 0 001.06 0l3.75-3.75a.75.75 0 10-1.06-1.06l-2.47 2.47V6.75zM15 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H15.75A.75.75 0 0115 12z"/></svg>
+                Upload
+            </label>
+            <button class="custom-btn" id="imageDownload">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1.5a.75.75 0 01.75.75V12h3.44a.75.75 0 01.53 1.28l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 01.53-1.28H11.25V2.25A.75.75 0 0112 1.5zM3.75 16.5a.75.75 0 01.75.75v2.25c0 .398.327.75.75.75h13.5a.75.75 0 00.75-.75V17.25a.75.75 0 011.5 0v2.25A2.25 2.25 0 0118.75 22.5H5.25A2.25 2.25 0 013 20.25V17.25a.75.75 0 01.75-.75z"/></svg>
+                Download
+            </button>
+        </div>
     </div>
-    <div class="flex justify-end gap-2 mt-4 relative z-50">
-      <button id="cancelCrop" class="px-4 py-2 bg-gray-400 text-black rounded">Batal</button>
-      <button id="saveCrop" class="px-4 py-2 bg-yellow-500 text-black font-bold rounded">Simpan</button>
-    </div>
-  </div>
-</div>
 
-<script>
-let cropper;
-let lastUploadedSrc = "";
+    <script>
+        const imageUpload = document.querySelector('#imageUpload');
+        const uploadedImage = document.querySelector('#uploadedImage');
+        const imageDownload = document.querySelector('#imageDownload');
+        const usernameInput = document.querySelector('.username-input');
+        const container = document.querySelector('#container');
+        
+        // Function to handle image upload
+        imageUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-document.getElementById("creatorName").addEventListener("input", function(){
-  const textEl = document.getElementById("nameText");
-  textEl.innerText = this.value || "Nama Kreator";
-});
+        // UPDATED download function with high-quality rendering fixes
+        imageDownload.addEventListener('click', () => {
+            const originalButtonContent = imageDownload.innerHTML;
+            imageDownload.textContent = 'Creating...';
+            imageDownload.disabled = true;
 
-function openCropper(src){
-  const cropperImage = document.getElementById("cropperImage");
-  cropperImage.src = src;
-  cropperImage.onload = () => {
-    document.getElementById("cropperModal").classList.remove("hidden");
-    if(cropper) cropper.destroy();
-    cropper = new Cropper(cropperImage, {
-      aspectRatio:1,
-      viewMode:1,
-      dragMode:"move",
-      autoCropArea:1,
-      responsive:true,
-      background:false,
-      minContainerWidth:300,
-      minContainerHeight:300,
-    });
-  }
-}
+            // Use a fixed high scale factor for sharp, high-resolution output
+            const scale = 3; 
 
-document.getElementById("uploadImg").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      lastUploadedSrc = ev.target.result;
-      openCropper(lastUploadedSrc);
-    }
-    reader.readAsDataURL(file);
-  }
-});
+            html2canvas(container, {
+                backgroundColor: null, 
+                useCORS: true, 
+                logging: false,
+                scale: scale, // Set the scale for higher resolution
+                onclone: (clonedDoc) => {
+                    // This function modifies the cloned document before html2canvas renders it.
+                    // The user on the webpage sees the original, but the downloaded image is from this modified version.
+                    const clonedContainer = clonedDoc.querySelector('.container');
+                    if (clonedContainer) {
+                        // Fix 1: Platform rendering.
+                        // Remove the problematic backdrop-filter and use a solid color to mimic the look.
+                        const platform = clonedContainer.querySelector('.platform');
+                        if (platform) {
+                            platform.style.backdropFilter = 'none';
+                            platform.style.backgroundColor = 'rgba(25, 25, 25, 0.5)'; 
+                        }
 
-document.getElementById("editPhotoBtn").addEventListener("click", function(){
-  if(!lastUploadedSrc){
-    alert("Upload foto dulu!");
-    return;
-  }
-  openCropper(lastUploadedSrc);
-});
+                        // Fix 2: Dark image issue.
+                        // Remove the gradient overlay that causes the darkening effect during render.
+                        const circleOverlay = clonedContainer.querySelector('.circle-overlay');
+                        if(circleOverlay) {
+                            circleOverlay.style.display = 'none';
+                        }
 
-document.getElementById("cancelCrop").addEventListener("click", function(){
-  document.getElementById("cropperModal").classList.add("hidden");
-  if(cropper) cropper.destroy();
-});
+                        // Also, hide the action buttons from the final image.
+                        const buttons = clonedContainer.querySelector('.button-container');
+                        if(buttons) {
+                           buttons.style.display = 'none';
+                        }
+                    }
+                }
+            }).then(canvas => {
+                const username = usernameInput.value.trim() || 'VIP_Agency_Design';
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `${username}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
-document.getElementById("saveCrop").addEventListener("click", function(){
-  const canvasCrop = cropper.getCroppedCanvas({width:400, height:400});
-  const profileImg = document.getElementById("profileImg");
-  profileImg.src = canvasCrop.toDataURL();
-  profileImg.style.display = "block";
-  profileImg.style.top = "50%";
-  profileImg.style.left = "50%";
-  profileImg.style.transform = "translate(-50%, -50%)";
-  document.getElementById("cropperModal").classList.add("hidden");
-  cropper.destroy();
-  lastUploadedSrc = profileImg.src;
+                // Restore button state
+                imageDownload.innerHTML = originalButtonContent;
+                imageDownload.disabled = false;
+            }).catch(err => {
+                console.error("Oops, something went wrong!", err);
+                alert("Sorry, couldn't create the image.");
+                // Restore button state on error
+                imageDownload.innerHTML = originalButtonContent;
+                imageDownload.disabled = false;
+            });
+        });
 
-  // Drag foto
-  let isDragging=false, startX=0, startY=0, initX=0, initY=0;
-  const profile = profileImg;
-  profile.onpointerdown=function(e){
-    isDragging=true;
-    startX=e.clientX||e.touches[0].clientX;
-    startY=e.clientY||e.touches[0].clientY;
-    const style = window.getComputedStyle(profile);
-    const matrix = new WebKitCSSMatrix(style.transform);
-    initX=matrix.m41;
-    initY=matrix.m42;
-    profile.setPointerCapture(e.pointerId);
-  }
-  profile.onpointermove=function(e){
-    if(!isDragging) return;
-    let moveX = (e.clientX||e.touches[0].clientX)-startX;
-    let moveY = (e.clientY||e.touches[0].clientY)-startY;
-    profile.style.transform = `translate(${initX+moveX}px, ${initY+moveY}px)`;
-  }
-  profile.onpointerup=function(){ isDragging=false; }
-  profile.ontouchend=function(){ isDragging=false; }
-});
-
-document.getElementById("downloadBtn").addEventListener("click", async function(){
-  const profileImg = document.getElementById("profileImg");
-  if(!profileImg.src) return alert("Upload foto dulu!");
-  const captureArea=document.getElementById("captureArea");
-
-  html2canvas(captureArea, {backgroundColor:null, scale:1, useCORS:true}).then(canvas=>{
-    const finalCanvas=document.createElement("canvas");
-    finalCanvas.width=644; finalCanvas.height=644;
-    const ctx=finalCanvas.getContext("2d");
-    ctx.drawImage(canvas,0,0,644,644);
-    const link=document.createElement("a");
-    link.href=finalCanvas.toDataURL("image/png");
-    link.download="vip-agency.png";
-    link.click();
-  });
-});
-</script>
+    </script>
 </body>
 </html>
+
