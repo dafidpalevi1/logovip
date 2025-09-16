@@ -399,22 +399,34 @@
                 scale: scale, // Set the scale for higher resolution
                 onclone: (clonedDoc) => {
                     // This function modifies the cloned document before html2canvas renders it.
-                    // The user on the webpage sees the original, but the downloaded image is from this modified version.
                     const clonedContainer = clonedDoc.querySelector('.container');
                     if (clonedContainer) {
-                        // Fix 1: Platform rendering.
-                        // Remove the problematic backdrop-filter and use a solid color to mimic the look.
+                        // Fix 1: Platform rendering and shadow position.
                         const platform = clonedContainer.querySelector('.platform');
                         if (platform) {
+                            // Convert vmin margin to a fixed pixel value to prevent positioning shifts during render.
+                            const vminValue = 4;
+                            const vminInPx = Math.min(window.innerWidth, window.innerHeight) * (vminValue / 100);
+                            platform.style.marginTop = `${vminInPx}px`;
+                            
+                            // Remove problematic filter and use a solid color to mimic the look.
                             platform.style.backdropFilter = 'none';
                             platform.style.backgroundColor = 'rgba(25, 25, 25, 0.5)'; 
                         }
 
                         // Fix 2: Dark image issue.
-                        // Remove the gradient overlay that causes the darkening effect during render.
                         const circleOverlay = clonedContainer.querySelector('.circle-overlay');
                         if(circleOverlay) {
                             circleOverlay.style.display = 'none';
+                        }
+
+                        // NEW Fix 3: Inaccurate outer ring rendering.
+                        // Remove the complex CSS mask which html2canvas cannot render correctly.
+                        // This results in a solid gold ring, which is visually accurate and stable.
+                        const outerRing = clonedContainer.querySelector('.outer-ring');
+                        if (outerRing) {
+                            outerRing.style.mask = 'none';
+                            outerRing.style.webkitMask = 'none'; // Also for webkit browsers
                         }
 
                         // Also, hide the action buttons from the final image.
