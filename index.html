@@ -23,7 +23,7 @@
       position: relative;
       width: 100%;
       max-width: 644px;
-      aspect-ratio: 1 / 1; /* selalu kotak */
+      aspect-ratio: 1 / 1;
       background: #111;
     }
 
@@ -52,6 +52,7 @@
       object-fit: cover;
       cursor: move;
       border: 2px dashed rgba(255,255,255,0.4);
+      touch-action: none; /* penting untuk HP */
     }
 
     /* Handle resize */
@@ -63,6 +64,7 @@
       border: 2px solid black;
       border-radius: 50%;
       z-index: 5;
+      touch-action: none;
     }
 
     .resize-handle.br { bottom: -8px; right: -8px; cursor: se-resize; }
@@ -213,45 +215,61 @@
       }
     });
 
-    // Drag photo wrapper
+    // --- Drag support (mouse + touch) ---
     let isDragging = false, dragX, dragY;
-    photoWrapper.addEventListener("mousedown", (e) => {
-      if (e.target.classList.contains("resize-handle")) return; 
-      isDragging = true;
-      dragX = e.clientX - photoWrapper.offsetLeft;
-      dragY = e.clientY - photoWrapper.offsetTop;
-    });
-    document.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        photoWrapper.style.left = (e.clientX - dragX) + "px";
-        photoWrapper.style.top = (e.clientY - dragY) + "px";
-      }
-    });
-    document.addEventListener("mouseup", () => isDragging = false);
 
-    // Resize via handle
+    function startDrag(x, y) {
+      isDragging = true;
+      dragX = x - photoWrapper.offsetLeft;
+      dragY = y - photoWrapper.offsetTop;
+    }
+    function doDrag(x, y) {
+      if (isDragging) {
+        photoWrapper.style.left = (x - dragX) + "px";
+        photoWrapper.style.top = (y - dragY) + "px";
+      }
+    }
+    function endDrag() { isDragging = false; }
+
+    // mouse events
+    photoWrapper.addEventListener("mousedown", (e) => {
+      if (e.target.classList.contains("resize-handle")) return;
+      startDrag(e.clientX, e.clientY);
+    });
+    document.addEventListener("mousemove", (e) => doDrag(e.clientX, e.clientY));
+    document.addEventListener("mouseup", endDrag);
+
+    // touch events
+    photoWrapper.addEventListener("touchstart", (e) => {
+      if (e.target.classList.contains("resize-handle")) return;
+      const t = e.touches[0];
+      startDrag(t.clientX, t.clientY);
+    });
+    document.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      doDrag(t.clientX, t.clientY);
+    });
+    document.addEventListener("touchend", endDrag);
+
+    // --- Resize support (mouse + touch) ---
     const handles = document.querySelectorAll(".resize-handle");
     let isResizing = false, currentHandle, startX, startY, startWidth, startHeight, startLeft, startTop, aspectRatio;
 
-    handles.forEach(handle => {
-      handle.addEventListener("mousedown", (e) => {
-        isResizing = true;
-        currentHandle = e.target;
-        startX = e.clientX;
-        startY = e.clientY;
-        startWidth = photoWrapper.offsetWidth;
-        startHeight = photoWrapper.offsetHeight;
-        startLeft = photoWrapper.offsetLeft;
-        startTop = photoWrapper.offsetTop;
-        aspectRatio = startWidth / startHeight;
-        e.stopPropagation();
-      });
-    });
-
-    document.addEventListener("mousemove", (e) => {
+    function startResize(x, y, handle) {
+      isResizing = true;
+      currentHandle = handle;
+      startX = x;
+      startY = y;
+      startWidth = photoWrapper.offsetWidth;
+      startHeight = photoWrapper.offsetHeight;
+      startLeft = photoWrapper.offsetLeft;
+      startTop = photoWrapper.offsetTop;
+      aspectRatio = startWidth / startHeight;
+    }
+    function doResize(x, y) {
       if (!isResizing) return;
-      let dx = e.clientX - startX;
-      let dy = e.clientY - startY;
+      let dx = x - startX;
+      let dy = y - startY;
 
       if (currentHandle.classList.contains("br")) {
         let newWidth = startWidth + dx;
@@ -288,11 +306,31 @@
       } else if (currentHandle.classList.contains("mb")) {
         photoWrapper.style.height = startHeight + dy + "px";
       }
+    }
+    function endResize() { isResizing = false; }
+
+    handles.forEach(handle => {
+      // mouse
+      handle.addEventListener("mousedown", (e) => {
+        startResize(e.clientX, e.clientY, e.target);
+        e.stopPropagation();
+      });
+      // touch
+      handle.addEventListener("touchstart", (e) => {
+        const t = e.touches[0];
+        startResize(t.clientX, t.clientY, e.target);
+        e.stopPropagation();
+      });
     });
 
-    document.addEventListener("mouseup", () => {
-      isResizing = false;
+    document.addEventListener("mousemove", (e) => doResize(e.clientX, e.clientY));
+    document.addEventListener("mouseup", endResize);
+
+    document.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      doResize(t.clientX, t.clientY);
     });
+    document.addEventListener("touchend", endResize);
 
     // Auto hide/show resize tools
     document.addEventListener("click", () => {
@@ -307,7 +345,6 @@
 
     // Download hasil edit
     downloadBtn.addEventListener("click", () => {
-      // sembunyikan handle & border
       const oldBorder = userPhoto.style.border;
       userPhoto.style.border = "none";
       const handles = document.querySelectorAll(".resize-handle");
